@@ -36,7 +36,7 @@ stats = Statistic(DATA_FILE)
 time.sleep(5)
 
 statistics = {
-    # 'codons_count': stats.count_codons(),
+    'codons_count': stats.count_codons(),
     'nucleotides_count': stats.count_nucleotides(),
 }
 

@@ -1,15 +1,26 @@
+# Singularityfile bootstrap file
 Bootstrap: docker
 From: alpine:3.6
 
-%runscript
-
-exec echo "The runscript is the containers default runtime command!"
-
 %labels
-AUTHOR ludd@cbs.dtu.dk
+AUTHOR ludd@bioinformatics.dtu.dk
+Version 1.0
 
+# 'setup' section is executed on the host system outside of the container after the base OS has been installed!
+%setup
+mkdir $SINGULARITY_ROOTFS/app
+
+# Copy files from your host system into the container!
+%files
+app/*   /app
+
+# 'environment' variables are sourced at runtime and not at build time!
+%environment
+MAGIC=abbracadabbra
+export MAGIC
+
+# 'post' section is where you can install, and configure your container.
 %post
-
 # OS Update & Upgrade
 apk update && apk upgrade
 
@@ -19,13 +30,10 @@ apk add \
   python \
   py-pip
 
-# Clone git repo and remove git repo
-git clone https://github.com/ldynia/containerized-workshop
-mv /containerized-workshop/app /app
-rm -rf /containerized-workshop
-
 # Execute script as a global program
 ln -s /app/main.py /usr/local/bin/fsa-analyzer
 chmod +x /usr/local/bin/fsa-analyzer
 
-echo "The post section is where you can install, and configure your container."
+# Executed on 'singularity run img'
+%runscript
+echo "The runscript is the containers default runtime command!"
